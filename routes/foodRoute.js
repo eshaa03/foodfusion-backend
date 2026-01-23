@@ -6,28 +6,51 @@ import {
   createFood,
   deleteFood,
   updateFood,
+  addReview,
+  getReviews,
 } from "../controllers/foodController.js";
+
 import { authMiddleware } from "../middleware/authMiddleware.js";
-import { upload } from "../middleware/upload.js";
+import { roleMiddleware } from "../middleware/roleMiddleware.js";
+import { upload } from "../middleware/cloudinary.js";
 
 const router = express.Router();
 
-/* ✅ USER APP (PUBLIC) */
+/* ================= PUBLIC ================= */
+
 router.get("/", getPublicFoods);
-
-/* ✅ ADMIN */
-router.get("/admin", authMiddleware, getAdminFoods); // 🔥 ADD THIS
-router.post("/", authMiddleware, upload.single("image"), createFood);
-router.put("/:id", authMiddleware, upload.single("image"), updateFood); // ✅ NEW
-router.delete("/:id", authMiddleware, deleteFood);
-
-/* OPTIONAL (USER) */
 router.get("/restaurant/:restaurantId", getFoodsByRestaurant);
 
-/* ✅ REVIEWS */
-import { addReview, getReviews } from "../controllers/foodController.js";
+/* ================= ADMIN ================= */
+
+router.get("/admin", authMiddleware, roleMiddleware(["admin"]), getAdminFoods);
+
+router.post(
+  "/",
+  authMiddleware,
+  roleMiddleware(["admin"]),
+  upload.single("image"),
+  createFood
+);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(["admin"]),
+  upload.single("image"),
+  updateFood
+);
+
+router.delete(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(["admin"]),
+  deleteFood
+);
+
+/* ================= REVIEWS ================= */
+
 router.post("/:id/reviews", authMiddleware, addReview);
 router.get("/:id/reviews", getReviews);
-
 
 export default router;
