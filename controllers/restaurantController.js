@@ -19,7 +19,20 @@ export const getPublicRestaurants = async (req, res) => {
             $ifNull: [{ $avg: "$foods.rating" }, 0], // Calc avg from food ratings
           },
           reviewCount: { $sum: "$foods.reviews" }, // Optional: sum of reviews
-          image: { $ifNull: ["$image", "https://via.placeholder.com/400"] }, // Ensure image exists
+          image: {
+            $cond: {
+              if: {
+                $or: [
+                  { $eq: ["$image", null] },
+                  { $not: ["$image"] },
+                  { $regexMatch: { input: "$image", regex: "^/uploads" } }
+                ]
+              },
+              then: "https://via.placeholder.com/400",
+              else: "$image"
+            }
+          },
+
           id: "$_id" // Frontend expects id
         },
       },
