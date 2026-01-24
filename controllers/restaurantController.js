@@ -24,15 +24,13 @@ export const getPublicRestaurants = async (req, res) => {
               if: {
                 $or: [
                   { $eq: ["$image", null] },
-                  { $not: ["$image"] },
-                  { $regexMatch: { input: "$image", regex: "^/uploads" } }
+                  { $eq: ["$image", ""] }
                 ]
               },
               then: "https://via.placeholder.com/400",
               else: "$image"
             }
           },
-
           id: "$_id" // Frontend expects id
         },
       },
