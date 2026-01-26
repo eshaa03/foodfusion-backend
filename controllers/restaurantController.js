@@ -62,3 +62,40 @@ export const getMyRestaurant = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch restaurant" });
   }
 };
+
+export const updateMyRestaurant = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne({ owner: req.user._id });
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "No restaurant found" });
+    }
+
+    const {
+      name,
+      cuisine,
+      description,
+      deliveryTime,
+      address,
+      dietaryType,
+    } = req.body;
+
+    restaurant.name = name ?? restaurant.name;
+    restaurant.cuisine = cuisine ?? restaurant.cuisine;
+    restaurant.description = description ?? restaurant.description;
+    restaurant.deliveryTime = deliveryTime ?? restaurant.deliveryTime;
+    restaurant.address = address ?? restaurant.address;
+    restaurant.dietaryType = dietaryType ?? restaurant.dietaryType;
+
+    if (req.file) {
+      restaurant.image = `/uploads/${req.file.filename}`;
+    }
+
+    await restaurant.save();
+
+    res.json(restaurant);
+  } catch (err) {
+    console.error("Update My Restaurant Error:", err);
+    res.status(500).json({ message: "Failed to update restaurant" });
+  }
+};
