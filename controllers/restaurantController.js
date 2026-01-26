@@ -24,7 +24,8 @@ export const getPublicRestaurants = async (req, res) => {
               if: {
                 $or: [
                   { $eq: ["$image", null] },
-                  { $eq: ["$image", ""] }
+                  { $eq: ["$image", ""] },
+                  { $regexMatch: { input: "$image", regex: "^/uploads" } }
                 ]
               },
               then: "https://via.placeholder.com/400",

@@ -13,8 +13,7 @@ export const addReview = async (req, res) => {
     const food = await Food.findById(id);
     if (!food) return res.status(404).json({ message: "Food not found" });
 
-    // 2. Check if already reviewed
-    // 2. Check if already reviewed
+    
     const existingReview = await Review.findOne({ food: id, user: userId });
 
     if (existingReview) {
@@ -123,9 +122,7 @@ export const createFood = async (req, res) => {
         ? JSON.parse(ingredients)
         : [],
 
-      image: req.file
-        ? `/uploads/${req.file.filename}`
-        : imageUrl || "",
+      image: req.file ? req.file.path : imageUrl || "",
 
       isAvailable: true,
 
