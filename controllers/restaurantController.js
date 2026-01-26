@@ -3,7 +3,6 @@ import Restaurant from "../models/Restaurant.js";
 export const getPublicRestaurants = async (req, res) => {
   try {
     const restaurants = await Restaurant.aggregate([
-      // 1. Join with Foods
       {
         $lookup: {
           from: "foods",
@@ -12,13 +11,12 @@ export const getPublicRestaurants = async (req, res) => {
           as: "foods",
         },
       },
-      // 2. Add Rating & Clean Up
       {
         $addFields: {
           rating: {
-            $ifNull: [{ $avg: "$foods.rating" }, 0], // Calc avg from food ratings
+            $ifNull: [{ $avg: "$foods.rating" }, 0],
           },
-          reviewCount: { $sum: "$foods.reviews" }, // Optional: sum of reviews
+          reviewCount: { $sum: "$foods.reviews" },
           image: {
             $cond: {
               if: {
@@ -32,10 +30,9 @@ export const getPublicRestaurants = async (req, res) => {
               else: "$image"
             }
           },
-          id: "$_id" // Frontend expects id
+          id: "$_id"
         },
       },
-      // 3. Project only needed fields (remove huge foods array)
       {
         $project: {
           foods: 0,
@@ -48,5 +45,20 @@ export const getPublicRestaurants = async (req, res) => {
   } catch (err) {
     console.error("Get Restaurants Error:", err);
     res.status(500).json({ message: "Failed to fetch restaurants", error: err.message });
+  }
+};
+
+export const getMyRestaurant = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne({ owner: req.user._id });
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "No restaurant found" });
+    }
+
+    res.json(restaurant);
+  } catch (err) {
+    console.error("Get My Restaurant Error:", err);
+    res.status(500).json({ message: "Failed to fetch restaurant" });
   }
 };
