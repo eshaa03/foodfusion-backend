@@ -124,6 +124,7 @@ export const createFood = async (req, res) => {
 
       image: req.file ? req.file.path : imageUrl || "",
 
+
       isAvailable: true,
 
       // ✅ LINK FOOD → RESTAURANT
@@ -176,7 +177,7 @@ export const updateFood = async (req, res) => {
 
     // ✅ IMAGE UPDATE
     if (req.file) {
-      food.image = `/uploads/${req.file.filename}`;
+      food.image = req.file.path;
     } else if (imageUrl) {
       food.image = imageUrl;
     }

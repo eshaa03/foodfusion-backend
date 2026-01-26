@@ -63,7 +63,7 @@ app.get("/api/agent/status", authMiddleware, roleMiddleware(["agent"]), getAgent
 // ✅ THIS IS WHAT YOUR FRONTEND CALLS
 app.use("/api/restaurants", restaurantRoutes);
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+//app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
   res.send("FoodFusion Backend Running");

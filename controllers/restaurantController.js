@@ -88,7 +88,7 @@ export const updateMyRestaurant = async (req, res) => {
     restaurant.dietaryType = dietaryType ?? restaurant.dietaryType;
 
     if (req.file) {
-      restaurant.image = `/uploads/${req.file.filename}`;
+      restaurant.image = req.file.path;
     }
 
     await restaurant.save();
