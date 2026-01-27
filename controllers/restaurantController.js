@@ -22,8 +22,7 @@ export const getPublicRestaurants = async (req, res) => {
               if: {
                 $or: [
                   { $eq: ["$image", null] },
-                  { $eq: ["$image", ""] },
-                  { $regexMatch: { input: "$image", regex: "^/uploads" } }
+                  { $eq: ["$image", ""] }
                 ]
               },
               then: "https://via.placeholder.com/400",
@@ -88,7 +87,7 @@ export const updateMyRestaurant = async (req, res) => {
     restaurant.dietaryType = dietaryType ?? restaurant.dietaryType;
 
     if (req.file) {
-      restaurant.image = req.file.path;
+      restaurant.image = req.file.path || req.file.secure_url;
     }
 
     await restaurant.save();
