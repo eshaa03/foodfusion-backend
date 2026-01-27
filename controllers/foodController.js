@@ -131,6 +131,14 @@ export const createFood = async (req, res) => {
       restaurant: restaurant._id,
     });
 
+    // 🔒 FORCE HEALTH LOGIC IF RESTAURANT IS HEALTHY
+    if (restaurant.category === "Healthy") {
+      food.mode = "diet";
+      food.isHealthy = true;
+      await food.save();
+    }
+
+
     res.status(201).json(food);
   } catch (err) {
     console.error("Create food error:", err);
@@ -156,6 +164,15 @@ export const updateFood = async (req, res) => {
     if (!food) {
       return res.status(404).json({ message: "Food not found" });
     }
+
+    const restaurant = await Restaurant.findById(food.restaurant);
+
+    // 🔒 Lock diet mode for healthy restaurants
+    if (restaurant.category === "Healthy") {
+      food.mode = "diet";
+      food.isHealthy = true;
+    }
+
 
     // ✅ CHECK OWNERSHIP (Skip for Super Admin)
     if (req.user.role !== "superadmin") {
