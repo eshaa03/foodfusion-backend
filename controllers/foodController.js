@@ -76,6 +76,11 @@ export const getAdminFoods = async (req, res) => {
     // ✅ RESTAURANT ADMIN → SEE ONLY THEIR FOODS
     const restaurant = await Restaurant.findOne({ owner: req.user._id });
 
+    const foodMode =
+      restaurant.type === "healthy"
+        ? "diet"
+        : "both";
+
     if (!restaurant) {
       return res.status(200).json([]);
     }
@@ -105,6 +110,11 @@ export const createFood = async (req, res) => {
 
     // ✅ FIND RESTAURANT OF LOGGED-IN ADMIN
     const restaurant = await Restaurant.findOne({ owner: req.user._id });
+      const foodMode =
+    restaurant.type === "healthy"
+      ? "diet"
+      : "both";
+
     if (!restaurant) {
       return res.status(403).json({ message: "No restaurant found for admin" });
     }
@@ -129,6 +139,7 @@ export const createFood = async (req, res) => {
 
       // ✅ LINK FOOD → RESTAURANT
       restaurant: restaurant._id,
+      mode: foodMode,
     });
 
     // 🔒 FORCE HEALTH LOGIC IF RESTAURANT IS HEALTHY

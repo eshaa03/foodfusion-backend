@@ -40,11 +40,11 @@ const foodSchema = new mongoose.Schema(
     },
 
     // 🔥 AVAILABILITY CONTROL
-    mode: {
-      type: String,
-      enum: ["diet", "normal", "both"],
-      default: "normal",
+    isAvailable: {
+      type: Boolean,
+      default: true,
     },
+
 
     isHealthy: { type: Boolean, default: false },
     calories: Number,
